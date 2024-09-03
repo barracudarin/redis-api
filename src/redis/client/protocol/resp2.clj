@@ -23,11 +23,12 @@
   [_]
   "$-1\r\n")
 
-(extend nil            RespVersion2 {:-write write-nil})
-(extend String         RespVersion2 {:-write shared/write-bulk-string})
-(extend Number         RespVersion2 {:-write shared/write-number})
-(extend Keyword        RespVersion2 {:-write (partial shared/write-keyword -write)})
-(extend java.util.List RespVersion2 {:-write (partial shared/write-seqable "*" -write)})
+(extend nil                     RespVersion2 {:-write write-nil})
+(extend String                  RespVersion2 {:-write shared/write-bulk-string})
+(extend java.util.regex.Pattern RespVersion2 {:-write (comp shared/write-bulk-string str)})
+(extend Number                  RespVersion2 {:-write shared/write-number})
+(extend Keyword                 RespVersion2 {:-write (partial shared/write-keyword -write)})
+(extend java.util.List          RespVersion2 {:-write (partial shared/write-seqable "*" -write)})
 
 (def readers
   {\+ shared/read-simple-string

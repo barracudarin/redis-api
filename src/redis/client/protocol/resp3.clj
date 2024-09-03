@@ -78,16 +78,17 @@
   [_]
   "_\r\n")
 
-(extend String            RespVersion3 {:-write shared/write-bulk-string})
-(extend Number            RespVersion3 {:-write shared/write-number})
-(extend BigInt            RespVersion3 {:-write write-bigint})
-(extend BigInteger        RespVersion3 {:-write write-bigint})
-(extend Boolean           RespVersion3 {:-write write-bool})
-(extend nil               RespVersion3 {:-write write-nil})
-(extend java.util.Map     RespVersion3 {:-write write-map})
-(extend Keyword           RespVersion3 {:-write (partial shared/write-keyword -write)})
-(extend PersistentHashSet RespVersion3 {:-write (partial shared/write-seqable "~" -write)})
-(extend java.util.List    RespVersion3 {:-write (partial shared/write-seqable "*" -write)})
+(extend String                  RespVersion3 {:-write shared/write-bulk-string})
+(extend java.util.regex.Pattern RespVersion3 {:-write (comp shared/write-bulk-string str)})
+(extend Number                  RespVersion3 {:-write shared/write-number})
+(extend BigInt                  RespVersion3 {:-write write-bigint})
+(extend BigInteger              RespVersion3 {:-write write-bigint})
+(extend Boolean                 RespVersion3 {:-write write-bool})
+(extend nil                     RespVersion3 {:-write write-nil})
+(extend java.util.Map           RespVersion3 {:-write write-map})
+(extend Keyword                 RespVersion3 {:-write (partial shared/write-keyword -write)})
+(extend PersistentHashSet       RespVersion3 {:-write (partial shared/write-seqable "~" -write)})
+(extend java.util.List          RespVersion3 {:-write (partial shared/write-seqable "*" -write)})
 
 (def readers
   (merge resp2/readers

@@ -19,13 +19,35 @@
       (str/split #"/")
       (vec)))
 
+(defn arg-spec
+  [{:keys [type arguments]}]
+  (let [;; treat the default case (i.e. the command-root map) as a block
+        type (or type "block")]
+    (case type
+      "block" (into [:map] (map (fn [{:keys [name optional] :as arg}]
+                                  [(keyword name) {:optional (boolean optional)} (arg-spec arg)]))
+                    arguments)
+      "oneof" (into [:or] (comp
+                           (map #(assoc % :optional true))
+                           (map #(do {:type "block" :arguments [%]}))
+                           (map arg-spec))
+                    arguments)
+      "string" string?
+      "integer" number?
+      "double" float?
+      "key" string?
+      "pattern" [:fn #(instance? % java.util.regex.Pattern)]
+      "unix-time" number?
+      "pure-token" boolean?
+      nil)))
+
 ;; https://raw.githubusercontent.com/redis/redis-doc/master/commands.json
 (def commands
   (-> "commands.json"
       (io/resource)
       (io/reader)
-      (json/read :key-fn command->keyword)))
-
+      (json/read :key-fn command->keyword)
+      (update-vals (fn [m] (assoc m :arg-spec (arg-spec m))))))
 
 ;; string: a string argument.
 ;; integer: an integer argument.
